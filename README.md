@@ -26,6 +26,10 @@ A full-stack project tracking application with separate backend and frontend cod
 git clone <repository-url>
 cd cahnprojecttracking
 
+
+---
+
+
 ### 2. Initial Dependencies
 
 npm install
@@ -35,6 +39,8 @@ npm install --prefix frontend
 ## Make sure to run frontend and backend concurrently.
 backend runs with npm run dev, and frontend runs with npm start
 
+
+---
 
 ###Authentication
 The frontend stores JWT token and user data in localStorage.
