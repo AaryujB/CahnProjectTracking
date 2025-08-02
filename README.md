@@ -30,7 +30,7 @@ cd cahnprojecttracking
 ---
 
 
-### 2. Initial Dependencies
+Initial Dependencies:
 
 npm install
 npm install --prefix backend
@@ -42,7 +42,8 @@ backend runs with npm run dev, and frontend runs with npm start
 
 ---
 
-###Authentication
+Authentication:
+
 The frontend stores JWT token and user data in localStorage.
 
 API requests include the token for protected endpoints.
@@ -50,16 +51,13 @@ API requests include the token for protected endpoints.
 On 401 errors, user is logged out automatically.
 
 
-###Technologies
+Technologies:
+
 Backend: Node.js, Express (assumed)
-
 Frontend: React, TailwindCSS, Axios
-
 Tools: concurrently for running both servers simultaneously
 
-###Notes
+Notes:
 Proxy is configured in frontend/package.json for API calls during development.
-
 TailwindCSS is configured via tailwind.config.js and postcss.config.js in the frontend.
-
 Ensure to configure environment variables correctly before running.
