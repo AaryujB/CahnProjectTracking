@@ -1,4 +1,4 @@
-CAHN Project Tracking
+# CAHN Project Tracking
 
 A full-stack project tracking application with separate backend and frontend codebases.
 
