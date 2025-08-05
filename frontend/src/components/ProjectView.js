@@ -1,8 +1,7 @@
-//frontend/components/ProjectView.js
-
-import React, { useState, useEffect } from 'react';
-import { Settings, Plus, CheckCircle, Clock, AlertCircle, Users, Calendar } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Settings, Plus, CheckCircle, Clock, AlertCircle, Calendar } from 'lucide-react';
 import { projectAPI, developerAPI } from '../services/api';
+import { formatDateForDisplay, formatDateForInput } from '../utils/dateUtils.js';
 
 const ProjectView = ({ user, project: initialProject, onLogout, onBack }) => {
   const [project, setProject] = useState(initialProject);
@@ -17,14 +16,8 @@ const ProjectView = ({ user, project: initialProject, onLogout, onBack }) => {
   // Check if current user can edit this project
   const canEdit = user.role === 'owner' || project.assignedDevelopers?.some(dev => dev._id === user.id);
 
-  useEffect(() => {
-    fetchProjectDetails();
-    if (user.role === 'owner') {
-      fetchDevelopers();
-    }
-  }, []);
-
-  const fetchProjectDetails = async () => {
+  // Move functions above useEffect and wrap with useCallback
+  const fetchProjectDetails = useCallback(async () => {
     try {
       const response = await projectAPI.getById(project._id);
       setProject(response.data);
@@ -32,16 +25,23 @@ const ProjectView = ({ user, project: initialProject, onLogout, onBack }) => {
       console.error('Error fetching project details:', error);
       setError('Failed to load project details');
     }
-  };
+  }, [project._id]);
 
-  const fetchDevelopers = async () => {
+  const fetchDevelopers = useCallback(async () => {
     try {
       const response = await developerAPI.getAll();
       setDevelopers(response.data);
     } catch (error) {
       console.error('Error fetching developers:', error);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchProjectDetails();
+    if (user.role === 'owner') {
+      fetchDevelopers();
+    }
+  }, [fetchProjectDetails, fetchDevelopers, user.role]);
 
   const addPhase = async (e) => {
     e.preventDefault();
@@ -283,7 +283,7 @@ const ProjectView = ({ user, project: initialProject, onLogout, onBack }) => {
                 <div>
                   <h4 className="font-medium mb-2">Timeline</h4>
                   <p className="text-gray-700">
-                    {new Date(project.startDate).toLocaleDateString()} - {new Date(project.endDate).toLocaleDateString()}
+                    {formatDateForDisplay(project.startDate)} - {formatDateForDisplay(project.endDate)}
                   </p>
                 </div>
                 <div>
@@ -432,7 +432,7 @@ const ProjectView = ({ user, project: initialProject, onLogout, onBack }) => {
                     <div>
                       <h4 className="text-lg font-semibold">{phase.name}</h4>
                       <p className="text-sm text-gray-500">
-                        {new Date(phase.startDate).toLocaleDateString()} - {new Date(phase.endDate).toLocaleDateString()}
+                        {formatDateForDisplay(phase.startDate)} - {formatDateForDisplay(phase.endDate)}
                       </p>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -511,7 +511,7 @@ const ProjectView = ({ user, project: initialProject, onLogout, onBack }) => {
                       <Calendar size={16} className="text-blue-600" />
                       <h4 className="font-medium">Project Started</h4>
                     </div>
-                    <p className="text-sm text-gray-500">{new Date(project.startDate).toLocaleDateString()}</p>
+                    <p className="text-sm text-gray-500">{formatDateForDisplay(project.startDate)}</p>
                   </div>
                 </div>
 
@@ -531,7 +531,7 @@ const ProjectView = ({ user, project: initialProject, onLogout, onBack }) => {
                         </span>
                       </div>
                       <p className="text-sm text-gray-500">
-                        {new Date(phase.startDate).toLocaleDateString()} - {new Date(phase.endDate).toLocaleDateString()}
+                        {formatDateForDisplay(phase.startDate)} - {formatDateForDisplay(phase.endDate)}
                       </p>
                       {phase.tasks && phase.tasks.length > 0 && (
                         <div className="mt-2">
@@ -560,7 +560,7 @@ const ProjectView = ({ user, project: initialProject, onLogout, onBack }) => {
                       <Calendar size={16} className="text-gray-600" />
                       <h4 className="font-medium">Project End Date</h4>
                     </div>
-                    <p className="text-sm text-gray-500">{new Date(project.endDate).toLocaleDateString()}</p>
+                    <p className="text-sm text-gray-500">{formatDateForDisplay(project.endDate)}</p>
                   </div>
                 </div>
               </div>
@@ -673,7 +673,7 @@ const ProjectView = ({ user, project: initialProject, onLogout, onBack }) => {
                         <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
                         <input
                           type="date"
-                          value={project.startDate?.split('T')[0] || ''}
+                          value={formatDateForInput(project.startDate)}
                           onChange={(e) => updateProjectField('startDate', e.target.value)}
                           className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         />
@@ -682,7 +682,7 @@ const ProjectView = ({ user, project: initialProject, onLogout, onBack }) => {
                         <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
                         <input
                           type="date"
-                          value={project.endDate?.split('T')[0] || ''}
+                          value={formatDateForInput(project.endDate)}
                           onChange={(e) => updateProjectField('endDate', e.target.value)}
                           className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         />

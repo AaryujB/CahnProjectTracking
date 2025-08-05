@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Eye, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 import { projectAPI, developerAPI } from '../services/api';
+import { formatDateForDisplay } from '../utils/dateUtils.js';
 
 const DeveloperDashboard = ({ user, onLogout, onOpenProject }) => {
   const [projects, setProjects] = useState([]);
@@ -132,7 +133,7 @@ const DeveloperDashboard = ({ user, onLogout, onOpenProject }) => {
                         {project.status}
                       </span>
                       <span className="text-sm text-gray-500">
-                        {new Date(project.startDate).toLocaleDateString()} - {new Date(project.endDate).toLocaleDateString()}
+                        {formatDateForDisplay(project.startDate)} - {formatDateForDisplay(project.endDate)}
                       </span>
                     </div>
                   </div>
@@ -169,7 +170,7 @@ const DeveloperDashboard = ({ user, onLogout, onOpenProject }) => {
                             <div>
                               <p className="font-medium">{phase.name}</p>
                               <p className="text-sm text-gray-500">
-                                {new Date(phase.startDate).toLocaleDateString()} - {new Date(phase.endDate).toLocaleDateString()}
+                                {formatDateForDisplay(phase.startDate)} - {formatDateForDisplay(phase.endDate)}
                               </p>
                             </div>
                           </div>

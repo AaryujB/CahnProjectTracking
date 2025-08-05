@@ -1,5 +1,3 @@
-//backend/routes/projects.js
-
 const express = require('express');
 const Project = require('../models/Project');
 const Phase = require('../models/Phase');
